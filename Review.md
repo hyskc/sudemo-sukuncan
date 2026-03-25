@@ -176,7 +176,37 @@ newScheduledThreadPool：定时任务。
 六、JVM是什么？
 JVM（Java虚拟机）是运行Java字节码的虚拟计算机环境，它提供了一个平台无关的运行环境，使得Java程序能够在任何平台上运行而无需重新编写。
 JVM五大内存区域名称及作用（程序计数器、虚拟机栈、本地方法栈、堆、方法区/元空间）
+对象创建：类加载检查 → 分配内存（指针碰撞/空闲列表） → 初始化零值 → 设置对象头 → 执行（必背）
+判断存活：可达性分析（GC Roots：虚拟机栈引用、静态属性引用、常量引用、JNI引用等）。（必背）
+三大垃圾回收算法：1.标记-清除2.复制3.标记-整理（必背）
 
+常考点（加分的深度）
+Serial / Serial Old：单线程，简单，适合客户端模式。
+Parallel Scavenge / Parallel Old：多线程，吞吐量优先，服务端默认。
+CMS（Concurrent Mark Sweep）：并发收集，低停顿，但会产生碎片。
+G1（Garbage First）：区域化，可预测停顿，Java 9+ 默认。
 
+类加载的五个阶段（必背）
+加载→验证→准备→解析→初始化
 
+双亲委派模型
+当一个类加载器收到加载请求时，先委派给父加载器，父加载器再向上委派，直到 Bootstrap 类加载器。只有父加载器无法加载时，子加载器才尝试自己加载。
+三个内置类加载器及加载范围
+Bootstrap ClassLoader（启动类加载器）
+Extension ClassLoader（扩展类加载器）
+Application ClassLoader（应用类加载器）
+
+OOM(内存溢出)
+1.栈溢出 (StackOverflowError) 递归过深、线程栈帧过大 检查递归，或调小栈大小（-Xss）
+2.堆内存溢出 (Java heap space) 对象过多、内存泄漏（如集合未清理）增大堆内存（-Xmx），或用MAT分析泄漏
+3.方法区溢出 (Metaspace) 动态生成类过多（如大量代理类、JSP）
+4.直接内存溢出 (Direct buffer memory) NIO中直接内存未释放 限制直接内存大小（-XX:MaxDirectMemorySize）
+
+常用工具：jps、jstat、jmap、jstack、jconsole、VisualVM、Arthas。（后期掌握）
+
+BIO / NIO / AIO 的区别（几乎必问）
+   模型	特点	线程模型	适用场景
+   BIO	同步阻塞	一个连接一个线程	连接数少，并发低
+   NIO	同步非阻塞	一个线程管理多个Channel（Selector）	连接数多，短连接（聊天、游戏）
+   AIO	异步非阻塞	回调通知	连接数多，长连接（但实际Netty还是用NIO）
 
