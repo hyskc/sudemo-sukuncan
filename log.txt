@@ -1,0 +1,12 @@
+1.
+09:42:23.003: [sudemo] git -c credential.helper= -c core.quotepath=false -c log.showSignature=false init
+Initialized empty Git repository in D:/suju/ideajavafiles/sudemo/.git/
+09:57:40.792: [sudemo] git -c credential.helper= -c core.quotepath=false -c log.showSignature=false add --ignore-errors -A -- readme.md
+10:05:07.479: [sudemo] git -c credential.helper= -c core.quotepath=false -c log.showSignature=false push --progress --porcelain origin refs/heads/main:refs/heads/main --set-upstream
+fatal: unable to access 'https://github.com/hyskc/sudemo-sukuncan/': Recv failure: Connection was reset
+10:06:20.496: [sudemo] git -c credential.helper= -c core.quotepath=false -c log.showSignature=false push --progress --porcelain origin refs/heads/main:refs/heads/main --set-upstream
+fatal: unable to access 'https://github.com/hyskc/sudemo-sukuncan/': Failed to connect to github.com port 443 after 21060 ms: Could not connect to server
+10:07:52.025: [sudemo] git -c credential.helper= -c core.quotepath=false -c log.showSignature=false add --ignore-errors -A -- log.txt
+初步分析原因是因为网络原因导致的无法推送的问题，切换了clash的一些节点，并ping github.com
+发现网络正常，同时了解到curl是用来测试服务器是否通畅的
+
