@@ -101,7 +101,7 @@ ArrayBlockingQueue
 有界性：强制有界。必须在创建时指定容量，且容量一旦设置不可改变。
 锁机制：一把锁。内部使用同一个 ReentrantLock 来控制入队（put）和出队（take）操作。这意味着生产者和消费者无法真正并行（不能同时进行插入和移除操作），但在低竞争场景下，锁开销更小且内存占用更稳定。
 公平性：支持在构造函数中设置公平模式。公平模式下，等待时间最长的线程会优先获取锁，但这通常会降低吞吐量。
-适用场景：适合容量固定且内存可控的场景，或者在需要保证公平性时使用。 
+适用场景：适合容量固定且内存可控的场景，或者在需要保证公平性时使用。
 LinkedBlockingQueue
 底层结构：基于链表的阻塞队列。
 有界性：可选有界。如果不指定容量，默认容量为 Integer.MAX_VALUE，即无界（实际受内存限制）。
@@ -109,7 +109,7 @@ LinkedBlockingQueue
 内存占用：由于是链表结构，每个元素需要额外的节点对象封装，GC 压力相对较大。
 适用场景：适合高并发场景，通常比 ArrayBlockingQueue 拥有更高的吞吐量（尤其是在多线程竞争激烈时）。如果不指定容量，需注意防止生产者过快导致内存溢出。
 作为大多数通用任务队列的首选
-SynchronousQueue 
+SynchronousQueue
 底层结构：它不存储元素。可以理解为容量为 0 的队列。
 核心机制：每个 put 操作必须等待一个 take 操作，反之亦然。它本质上是一个交接（Handoff）通道，生产者直接将数据交给消费者，数据不会在队列中停留。
 实现模式：
@@ -212,3 +212,40 @@ BIO / NIO / AIO 的区别（几乎必问）
    NIO	同步非阻塞	一个线程管理多个Channel（Selector）	连接数多，短连接（聊天、游戏）
    AIO	异步非阻塞	回调通知	连接数多，长连接（但实际Netty还是用NIO）
 
+六、Java框架
+1 IoC与DI(面向解耦，加强代码活力）
+IoC：控制反转，对象创建和依赖关系由容器管理。
+DI：依赖注入，方式有构造器注入、setter注入、字段注入（@Autowired）。
+Bean生命周期：实例化 → 属性赋值 → 初始化（@PostConstruct、InitializingBean） → 使用 → 销毁（@PreDestroy、DisposableBean）。
+
+2 AOP（扩展精确增强）
+动态代理：JDK（基于接口）、CGLIB（基于子类）。
+通知类型：@Before、@After、@AfterReturning、@AfterThrowing、@Around。
+切点表达式：execution、within、@annotation。
+
+@Transactional 是 Spring 框架中用于声明式事务管理的核心注解。它可以添加到类或方法上，用来定义方法执行时的事务边界。
+@Transactional 的作用是让方法中的数据库操作在同一个事务中执行，要么全部成功（提交），要么全部失败（回滚）
+3.Spring事务（事务回滚）
+@Transactional：基于AOP，默认回滚RuntimeException和Error，可指定rollbackFor。
+传播机制：REQUIRED、REQUIRES_NEW、NESTED等。
+隔离级别：DEFAULT、READ_UNCOMMITTED等。
+事务失效场景：非public方法、自调用、异常被捕获、数据库引擎不支持。
+
+DispatcherServlet（中央控制器） 是 SpringMVC统一的入口，所有的请求都通过它，HandlerAdapter（处理器适配器）、HandlerMapping（处理器映射器）、ViewResolver（视图解析器）
+DispatcherServlet 接收请求 → HandlerMapping 找到对应的 Controller 方法 → HandlerAdapter 执行该方法 → 返回 ModelAndView → ViewResolver 渲染视图 → 输出响应。建议结合SpringMVC的工作流程深度理解
+4.Spring MVC
+DispatcherServlet处理流程：接收请求 → 找HandlerMapping → 执行HandlerAdapter → 返回ModelAndView → 视图解析 → 渲染响应。
+核心组件：HandlerMapping、HandlerAdapter、ViewResolver。
+
+@EnableAutoConfiguration 注解用于启用 Spring Boot 的自动配置功能。它告诉 Spring Boot 应用程序自动配置应用程序所需的 Bean，从而减少了开发者的工作量，使得应用程序可以更快速地搭建和运行。
+Spring Boot 启动时会扫描类路径下的 META-INF/spring.factories 文件，里面列出了所有自动配置类。每个自动配置类用 @Conditional 条件注解控制是否生效，比如 @ConditionalOnClass 表示只有类路径存在某个类时才生效。这样既实现了自动配置，又不会过度配置。
+spring.factories用来注册自动配置类
+5.Spring Boot
+自动配置：@EnableAutoConfiguration + spring.factories + @Conditional。
+启动流程：SpringApplication.run() → 加载配置 → 创建环境 → 刷新上下文。
+Starter：简化依赖管理。
+配置加载顺序：properties > yaml > 环境变量 > 命令行参数。
+
+ORM是面向对象程序设计语言和关系型数据库发展不同步时的解决方案
+6.MyBatis就是把SQL与java对象通过映射绑定，并通过动态代理执行，流程分两步，启动时做初始化，运行时做执行，初始化阶段，项目启动时，Mybatis会先解析mybatis.config.xml，加载所有mapper文件，把数据源，插件、类型别名、数据映射全部注入到核心对象configuration，每一个sql优惠变成一个核心对象mapperstatement存进去，最后这些配置会被打包成一个SqlsessionFactory(mybatis的核心工厂类），然后到执行阶段，我们会先获取sqlsession，然后调用mapper方法，比如mapper.selectById(1),注意mapper接口没有实现类，mybatis会给他生成一个代理对象MapperProxy，当你调用方法时，MapperProxy它会去configuration里面找到对应的MapperStatement，交给Executor调度，StatementHandler准备SQL，ParameterHander绑定参数，ResultSetHandler映射结果，最后事务提交、回滚、关闭、链接，全部由SqlSession统一控制
+初始化建好工厂，执行时走代理，核心是MapperedStatement和EXecutor
