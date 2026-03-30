@@ -249,3 +249,12 @@ Starter：简化依赖管理。
 ORM是面向对象程序设计语言和关系型数据库发展不同步时的解决方案
 6.MyBatis就是把SQL与java对象通过映射绑定，并通过动态代理执行，流程分两步，启动时做初始化，运行时做执行，初始化阶段，项目启动时，Mybatis会先解析mybatis.config.xml，加载所有mapper文件，把数据源，插件、类型别名、数据映射全部注入到核心对象configuration，每一个sql优惠变成一个核心对象mapperstatement存进去，最后这些配置会被打包成一个SqlsessionFactory(mybatis的核心工厂类），然后到执行阶段，我们会先获取sqlsession，然后调用mapper方法，比如mapper.selectById(1),注意mapper接口没有实现类，mybatis会给他生成一个代理对象MapperProxy，当你调用方法时，MapperProxy它会去configuration里面找到对应的MapperStatement，交给Executor调度，StatementHandler准备SQL，ParameterHander绑定参数，ResultSetHandler映射结果，最后事务提交、回滚、关闭、链接，全部由SqlSession统一控制
 初始化建好工厂，执行时走代理，核心是MapperedStatement和EXecutor
+
+七、索引（建议联系视频理解，理解速度比文字快）（链表结构）
+1.覆盖索引与索引下推（覆盖索引是新建了一个索引表，索引下推是为了
+https://www.bilibili.com/video/BV1ER4y1N7vh/?spm_id_from=333.337.search-card.all.click&vd_source=be4efa25cd78369817a468910306ec03
+2.聚簇索引：找到索引即找到了数据
+  非聚簇索引：链表
+3.联合索引最左前缀原则（感觉不是很难，就看一下就行了）
+4.覆盖索引与索引下推
+索引后面可以补充下数据库方面的东西
